@@ -5,6 +5,17 @@ exports.getAll = (req, res) => {
   res.send(produtos);
 };
 
+exports.getById = (req, res) => {
+  const id = parseInt(req.params.id);
+  const produto = produtos.find((p) => p.id === id);
+
+  if (produto) {
+    res.send(produto);
+  } else {
+    res.status(404).send({ error: "Produto não encontrado" });
+  }
+};
+
 exports.getCar = (req, res) => {
   res.send(carrinho);
 };
