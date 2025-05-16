@@ -9,11 +9,7 @@ exports.getById = (req, res) => {
   const id = parseInt(req.params.id);
   const produto = produtos.find((p) => p.id === id);
 
-  if (produto) {
-    res.send(produto);
-  } else {
-    res.status(404).send({ error: "Produto não encontrado" });
-  }
+  res.send(produto);
 };
 
 exports.getCar = (req, res) => {
@@ -24,9 +20,13 @@ exports.addProduto = (req, res) => {
   const id = req.params.id;
   const produto = produtos.find((item) => item.id == id);
 
+  if (!produto) {
+    return res.status(404).send({ mensagem: "Produto não encontrado" });
+  }
+
   const filtro = carrinho.find((item) => item.id == id);
   if (filtro) {
-    return res.send({ mensage: "produto já adicionado" });
+    return res.send({ mensagem: "Produto já adicionado" });
   }
 
   carrinho.push(produto);
@@ -35,7 +35,12 @@ exports.addProduto = (req, res) => {
 
 exports.deleteProduto = (req, res) => {
   const id = req.params.id;
-  carrinho = carrinho.filter((item) => item.id != id);
+  const index = carrinho.findIndex((item) => item.id == id);
 
-  res.send(carrinho);
+  if (index !== -1) {
+    carrinho.splice(index, 1);
+    return res.send({ mensagem: "Produto removido com sucesso", carrinho });
+  }
+
+  res.status(404).send({ mensagem: "Produto não encontrado no carrinho" });
 };
